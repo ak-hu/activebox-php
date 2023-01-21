@@ -11,7 +11,7 @@
 	$user = $result->fetch_assoc();
 	if(count($user) == 0){
 		echo "The user does not exist";
-		exit();
+		exit(0);
 	}
 
 	setcookie('user', $user['name'], time() + 3600, "/");
