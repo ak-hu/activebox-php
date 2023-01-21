@@ -14,7 +14,7 @@
 		exit();
 	}
 	
-	$pass = md5($pass."put your unique phrase here");
+	$pass = md5($pass."asvnmdfg92345");
 
 	$mysql = new mysqli('localhost', 'admin', '12345', 'register-bd');
 	$mysql->query("INSERT INTO `users` (`login`, `pass`, `name`)

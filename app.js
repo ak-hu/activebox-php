@@ -10,7 +10,6 @@ $(function() {
     let navToggle = $("#navToggle");
 
     checkScroll(scrollPos, introH);
-    alert("success");
 
     $(window).on("scroll resize", function() {
         introH = intro.innerHeight();
