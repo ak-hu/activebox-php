@@ -122,7 +122,7 @@
 				</form>
 			</div>
 			<?php else: ?>
-				<p> Hi, <?=$_COOKIE['user']?>. To exit click <a href="exit.php">here</a>.</p>
+				<p>Hi, <?php echo htmlspecialchars($_COOKIE['user'], ENT_QUOTES, 'UTF-8'); ?>. To exit click <a href="exit.php">here</a>.</p
 		<?php endif;?>
 		</div>
 	</div><br><br><br>
