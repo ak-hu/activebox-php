@@ -2,22 +2,29 @@
 	$login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
 	$pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
 
-	$pass = md5($pass."asvnmdfg92345");
+	// Hash the password securely using a modern hashing algorithm like bcrypt
+	$hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
 
 	$mysql = new mysqli('localhost', 'admin', '12345', 'register-bd');
 
+	// Prepare and execute a parameterized query
+	$stmt = $mysql->prepare("SELECT * FROM `users` WHERE `login` = ? AND `pass` = ?");
+	$stmt->bind_param('ss', $login, $hashedPassword);
+	$stmt->execute();
 
-	$result = $mysql->query("SELECT * FROM `users` WHERE `login` = '$login' AND `pass` = '$pass'");
+	// Fetch the result
+	$result = $stmt->get_result();
 	$user = $result->fetch_assoc();
-	if(count($user) == 0){
+
+	if (!$user) {
 		echo "The user does not exist";
 		exit(0);
 	}
 
-	setcookie('user', $user['name'], time() + 3600, "/");
-
+	// Store user data in a session instead of a cookie
+	session_start();
+	$_SESSION['user'] = $user['name'];
 
 	$mysql->close();
-
 	header('Location: /activebox.com');
 ?>
