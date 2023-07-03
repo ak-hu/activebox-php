@@ -1,30 +1,43 @@
 <?php
-	$login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
-	$pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
+    $login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
+    $pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
 
-	// Hash the password securely using a modern hashing algorithm like bcrypt
-	$hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
+    // Hash the password securely using a modern hashing algorithm like bcrypt
+    $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
 
-	$mysql = new mysqli('localhost', 'admin', '12345', 'register-bd');
+    $mysqli = new mysqli('localhost', 'admin', '12345', 'register-bd');
 
-	// Prepare and execute a parameterized query
-	$stmt = $mysql->prepare("SELECT * FROM `users` WHERE `login` = ? AND `pass` = ?");
-	$stmt->bind_param('ss', $login, $hashedPassword);
-	$stmt->execute();
+    // Check for connection errors
+    if ($mysqli->connect_errno) {
+        echo "Failed to connect to MySQL: " . $mysqli->connect_error;
+        exit();
+    }
 
-	// Fetch the result
-	$result = $stmt->get_result();
-	$user = $result->fetch_assoc();
+    // Prepare and execute a parameterized query
+    $stmt = $mysqli->prepare("SELECT * FROM `users` WHERE `login` = ? AND `pass` = ?");
+    $stmt->bind_param('ss', $login, $hashedPassword);
+    $stmt->execute();
 
-	if (!$user) {
-		echo "The user does not exist";
-		exit(0);
-	}
+    // Check for query execution errors
+    if ($stmt->errno) {
+        echo "Query execution failed: " . $stmt->error;
+        exit();
+    }
 
-	// Store user data in a session instead of a cookie
-	session_start();
-	$_SESSION['user'] = $user['name'];
+    // Fetch the result
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
-	$mysql->close();
-	header('Location: /activebox.com');
+    if (!$user) {
+        echo "The user does not exist";
+        exit(0);
+    }
+
+    // Store user data in a session instead of a cookie
+    session_start();
+    $_SESSION['user'] = $user['name'];
+
+    $stmt->close();
+    $mysqli->close();
+    header('Location: /activebox.com');
 ?>
