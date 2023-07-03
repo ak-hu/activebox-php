@@ -1,25 +1,43 @@
 <?php
-	$login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
-	$name = filter_var(trim($_POST['name']), FILTER_SANITIZE_STRING);
-	$pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
+    $login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
+    $pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
 
-	if(mb_strlen($login) < 5 || mb_strlen($login) > 90) {
-		echo "Invalid login length";
-		exit();
-	} else if (mb_strlen($name) < 3 || mb_strlen($name) > 50) {
-		echo "Invalid name length";
-		exit();
-	} else if(mb_strlen($pass) < 2 || mb_strlen($pass) > 6) {
-		echo "Invalid password length (from 2 to 6 symbols)";
-		exit();
-	}
-	
-	$pass = md5($pass."asvnmdfg92345");
+    // Hash the password securely using a modern hashing algorithm like bcrypt
+    $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
 
-	$mysql = new mysqli('localhost', 'admin', '12345', 'register-bd');
-	$mysql->query("INSERT INTO `users` (`login`, `pass`, `name`)
-	VALUES('$login', '$pass', '$name')");
-	$mysql->close();
+    $mysqli = new mysqli('localhost', 'admin', '12345', 'register-bd');
 
-	header('Location: /activebox.com');
+    // Check for connection errors
+    if ($mysqli->connect_errno) {
+        echo "Failed to connect to MySQL: " . $mysqli->connect_error;
+        exit();
+    }
+
+    // Prepare and execute a parameterized query
+    $stmt = $mysqli->prepare("SELECT * FROM `users` WHERE `login` = ? AND `pass` = ?");
+    $stmt->bind_param('ss', $login, $hashedPassword);
+    $stmt->execute();
+
+    // Check for query execution errors
+    if ($stmt->errno) {
+        echo "Query execution failed: " . $stmt->error;
+        exit();
+    }
+
+    // Fetch the result
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if (!$user) {
+        echo "The user does not exist";
+        exit(0);
+    }
+
+    // Store user data in a session instead of a cookie
+    session_start();
+    $_SESSION['user'] = $user['name'];
+
+    $stmt->close();
+    $mysqli->close();
+    header('Location: /activebox.com');
 ?>
