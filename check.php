@@ -5,7 +5,11 @@ $pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
 // Hash the password securely using a modern hashing algorithm like bcrypt
 $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
 
-$mysqli = new mysqli('localhost', 'admin', '12345', 'register-bd');
+// Include the configuration file
+require_once 'config.php';
+
+// Establish a database connection
+$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 // Check for connection errors
 if ($mysqli->connect_errno) {
