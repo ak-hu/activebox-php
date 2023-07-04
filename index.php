@@ -436,9 +436,7 @@
 
 
 <!-- Javascript -->
-<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+L3obtdW2PlV4sL6V4xa6JFg9MvDHw+mT50TU7k6tjrbgTH" crossorigin="anonymous"></script>
 <script src="app.js"></script>
-
-
 </body>
 </html>

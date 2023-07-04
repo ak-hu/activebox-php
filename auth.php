@@ -4,8 +4,12 @@
 
     // Hash the password securely using a modern hashing algorithm like bcrypt
     $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
+    
+    // Include the configuration file
+    require_once 'config.php';
 
-    $mysqli = new mysqli('localhost', 'admin', '12345', 'register-bd');
+    // Establish a database connection
+    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
     // Check for connection errors
     if ($mysqli->connect_errno) {
