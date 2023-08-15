@@ -1,9 +1,5 @@
 # Activebox
 
-Welcome to the ActiveBox.com repository! Here you will find the source code for the ActiveBox.com website.
-
-## About
-
 ActiveBox.com is a modern and responsive website template built using HTML, CSS, and JavaScript. It provides a sleek and professional design that can be used for various purposes such as portfolios, businesses, or personal projects.
 
 ## Features
